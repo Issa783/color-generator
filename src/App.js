@@ -1,24 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import styles from "./style.module.css";
+import Values from "values.js";
+import SingleColor from "./components/singlecolor";
 
 function App() {
+  const [color, setColor] = useState("");
+  const [error, setError] = useState(false);
+  const [list, setList] = useState(new Values("#fcd34e").all(10));
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    try {
+      let colors = new Values(color).all(10);
+      setList(colors);
+    } catch (error) {
+      setError(true);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <section className={styles.container}>
+        <h3>Color Generator</h3>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="#f5689"
+            value={color}
+            onChange={(e) => {
+              setColor(e.target.value);
+            }}
+            className={error ? styles.error : null}
+          />
+          <button className={styles.btn}>Submit</button>
+        </form>
+      </section>
+      <section className={styles.colors}>
+        {list.map((color,index) => {
+          return <SingleColor key={index}  {...color} index = {index} />
+        })}
+      </section>
+    </>
   );
 }
 
